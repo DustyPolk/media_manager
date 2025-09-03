@@ -1,0 +1,43 @@
+# Media File Manager - Default Configuration
+
+# File processing settings
+processing:
+  backup_enabled: true
+  backup_directory: "./backups"
+  parallel_processing: false
+  max_workers: 4
+  update_metadata: true
+  create_backups: true
+
+# File naming patterns
+naming:
+  audio_pattern: "{artist} - {title} ({year})"
+  video_pattern: "{title} ({year}) - {quality}"
+  replace_special_chars: true
+  case_standardization: "title"  # title, upper, lower
+
+# Metadata field requirements
+metadata:
+  audio:
+    required_fields: ["artist", "title", "album", "year"]
+    optional_fields: ["genre", "track", "bpm", "key"]
+  video:
+    required_fields: ["title", "year"]
+    optional_fields: ["genre", "director", "cast", "description"]
+
+# Supported file formats
+supported_formats:
+  audio: [".mp3", ".flac", ".wav", ".aac", ".ogg", ".m4a"]
+  video: [".mp4", ".avi", ".mkv", ".mov", ".wmv", ".flv"]
+
+# Logging configuration
+logging:
+  level: "INFO"
+  file: null
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+# Quality settings for video files
+video_quality:
+  hd: ["720p", "1080p", "1440p", "2160p"]
+  sd: ["480p", "576p"]
+  ultra_hd: ["4K", "8K"]

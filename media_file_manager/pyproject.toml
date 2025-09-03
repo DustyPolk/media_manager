@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "media-file-manager"
+version = "1.0.0"
+description = "Automated media file organization and metadata management"
+authors = [{name = "Your Name", email = "your.email@example.com"}]
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "mutagen>=1.46.0",
+    "Pillow>=9.0.0",
+    "ffmpeg-python>=0.2.0",
+    "python-magic>=0.4.27",
+    "PyYAML>=6.0",
+    "click>=8.0.0",
+    "tqdm>=4.64.0",
+    "colorama>=0.4.5",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "pytest-mock>=3.10.0",
+    "black>=22.0.0",
+    "flake8>=5.0.0",
+    "mypy>=0.991",
+    "pylint>=2.15.0",
+]
+
+[project.scripts]
+media-manager = "media_file_manager.main:main"
+
+[tool.black]
+line-length = 88
+target-version = ['py38']
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "--cov=src --cov-report=html --cov-report=term-missing"

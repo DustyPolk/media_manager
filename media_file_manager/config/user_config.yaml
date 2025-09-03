@@ -1,0 +1,24 @@
+# Media File Manager - User Configuration
+# Override default settings here
+
+# Custom naming patterns
+naming:
+  audio_pattern: "{artist} - {title} ({year}) [{bitrate}]"
+  video_pattern: "{title} ({year}) [{quality}] [{codec}]"
+
+# Custom metadata preferences
+metadata:
+  audio:
+    required_fields: ["artist", "title", "album", "year", "genre"]
+    optional_fields: ["track", "bpm", "key", "composer", "lyrics"]
+
+# Processing preferences
+processing:
+  backup_directory: "~/media_backups"
+  parallel_processing: true
+  max_workers: 8
+
+# Logging preferences
+logging:
+  level: "DEBUG"
+  file: "~/media_manager.log"
