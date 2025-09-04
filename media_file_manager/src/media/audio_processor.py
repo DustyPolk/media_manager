@@ -154,7 +154,9 @@ class AudioProcessor:
         if hasattr(audio, 'info') and hasattr(audio.info, 'sample_rate'):
             metadata['sample_rate'] = audio.info.sample_rate
             metadata['channels'] = audio.info.channels
-            metadata['bits_per_sample'] = audio.info.bits_per_sample
+            # Only FLAC files have bits_per_sample, MP3 doesn't
+            if hasattr(audio.info, 'bits_per_sample'):
+                metadata['bits_per_sample'] = audio.info.bits_per_sample
             
         # Vorbis comments (OGG, FLAC)
         if hasattr(audio, 'tags') and audio.tags:
@@ -230,7 +232,34 @@ class AudioProcessor:
         for field, tag_name in tag_mapping.items():
             if field in metadata and metadata[field]:
                 if hasattr(audio, 'tags') and audio.tags is not None:
-                    audio.tags[tag_name] = str(metadata[field])
+                    # For MP3 files, we need to create proper ID3 frames
+                    if tag_name in ['TIT2', 'TPE1', 'TALB', 'TDRC', 'TCON', 'TRCK', 'COMM', 'TCOM']:
+                        try:
+                            from mutagen.id3 import TIT2, TPE1, TALB, TDRC, TCON, TRCK, COMM, TCOM
+                            
+                            # Create the appropriate frame based on tag type
+                            if tag_name == 'TIT2':
+                                audio.tags[tag_name] = TIT2(encoding=3, text=str(metadata[field]))
+                            elif tag_name == 'TPE1':
+                                audio.tags[tag_name] = TPE1(encoding=3, text=str(metadata[field]))
+                            elif tag_name == 'TALB':
+                                audio.tags[tag_name] = TALB(encoding=3, text=str(metadata[field]))
+                            elif tag_name == 'TDRC':
+                                audio.tags[tag_name] = TDRC(encoding=3, text=str(metadata[field]))
+                            elif tag_name == 'TCON':
+                                audio.tags[tag_name] = TCON(encoding=3, text=str(metadata[field]))
+                            elif tag_name == 'TRCK':
+                                audio.tags[tag_name] = TRCK(encoding=3, text=str(metadata[field]))
+                            elif tag_name == 'COMM':
+                                audio.tags[tag_name] = COMM(encoding=3, lang='eng', desc='', text=str(metadata[field]))
+                            elif tag_name == 'TCOM':
+                                audio.tags[tag_name] = TCOM(encoding=3, text=str(metadata[field]))
+                        except ImportError:
+                            # Fallback to simple string assignment if mutagen.id3 is not available
+                            audio.tags[tag_name] = str(metadata[field])
+                    else:
+                        # For other tag types, use simple string assignment
+                        audio.tags[tag_name] = str(metadata[field])
                     
     def _update_format_metadata(self, audio: mutagen.File, metadata: Dict[str, Any]) -> None:
         """Update format-specific metadata."""
@@ -290,6 +319,7 @@ class AudioProcessor:
                     properties['sample_rate'] = info.sample_rate
                 if hasattr(info, 'channels'):
                     properties['channels'] = info.channels
+                # Only FLAC files have bits_per_sample, MP3 doesn't
                 if hasattr(info, 'bits_per_sample'):
                     properties['bits_per_sample'] = info.bits_per_sample
                     
