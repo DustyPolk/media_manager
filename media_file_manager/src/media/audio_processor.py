@@ -229,13 +229,13 @@ class AudioProcessor:
         
         for field, tag_name in tag_mapping.items():
             if field in metadata and metadata[field]:
-                if hasattr(audio, 'tags') and audio.tags:
+                if hasattr(audio, 'tags') and audio.tags is not None:
                     audio.tags[tag_name] = str(metadata[field])
                     
     def _update_format_metadata(self, audio: mutagen.File, metadata: Dict[str, Any]) -> None:
         """Update format-specific metadata."""
         # Vorbis comments for OGG/FLAC
-        if hasattr(audio, 'tags') and audio.tags:
+        if hasattr(audio, 'tags') and audio.tags is not None:
             vorbis_fields = ['bpm', 'key', 'mood', 'language']
             for field in vorbis_fields:
                 if field in metadata and metadata[field]:
@@ -244,7 +244,7 @@ class AudioProcessor:
     def _update_artwork(self, audio: mutagen.File, artwork: Dict[str, Any]) -> None:
         """Update artwork in audio file."""
         try:
-            if hasattr(audio, 'tags') and audio.tags:
+            if hasattr(audio, 'tags') and audio.tags is not None:
                 # Create APIC frame for ID3 tags
                 from mutagen.id3 import APIC
                 
